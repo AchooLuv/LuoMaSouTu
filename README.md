@@ -4,7 +4,7 @@
 
 **以图搜图 / 以图搜番 Web 应用 —— 反查动漫图片的原始出处，定位番剧截图出自哪一集哪一秒**
 
-[![在线体验](https://img.shields.io/badge/在线体验-img.muri.life-6d4df6?style=for-the-badge)](https://img.muri.life)
+[![在线体验](https://img.shields.io/badge/在线体验-img.muri.life-6d4df6?style=for-the-badge)](https://soutu.muri.life)
 [![License](https://img.shields.io/badge/license-MIT-0f9d8f?style=for-the-badge)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-ff69b4?style=for-the-badge)](../../pulls)
 
