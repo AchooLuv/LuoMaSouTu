@@ -94,15 +94,6 @@ const onSearch = async () => {
             </template>
           </el-dropdown>
 
-          <el-link
-            href="https://github.com/AchooLuv/LuoMaSouTu"
-            target="_blank"
-            rel="noopener noreferrer"
-            underline="never"
-          >
-            <el-icon><Link /></el-icon>
-            GitHub
-          </el-link>
           <ThemeToggle />
         </div>
       </div>
