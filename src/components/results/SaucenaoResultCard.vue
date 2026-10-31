@@ -92,8 +92,8 @@ const ringOffset = computed(
       </el-image>
 
       <div v-else class="sauce-card__blocked">
-        <el-icon><Lock /></el-icon>
-        <span>{{ item.level === 'Explicit' ? 'R18 预览已隐藏' : '预览已隐藏' }}</span>
+        <el-icon><Picture /></el-icon>
+        <span>上游未提供预览</span>
       </div>
 
       <span v-if="index === 0" class="sauce-card__best">BEST</span>

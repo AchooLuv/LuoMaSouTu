@@ -119,10 +119,10 @@ export const parse = async (raw: unknown): Promise<ResultType[]> => {
     const image = node.find('.resulttableimage img').first()
     const rating = (image.attr('raw-rating') ?? '').toLowerCase()
     const level = RATING_LEVEL[rating]
-    // SauceNAO 对部分结果（尤其是 R18）先用 blocked.gif 占位，真实缩略图放在 data-src。
-    // 这里只对非 Explicit 结果取 data-src，避免绕开上游对成人内容的默认遮挡。
-    const thumbSrc =
-      level === 'Explicit' ? image.attr('src') : (image.attr('data-src') ?? image.attr('src'))
+    // 真实缩略图通常放在 data-src；src 只是 blocked.gif 占位。
+    // 即使结果是 R18，只要用户没勾选「过滤 R18 内容」，也照常展示预览；
+    // 勾选后 collectFiltered 会直接把这条结果过滤掉。
+    const thumbSrc = image.attr('data-src') ?? image.attr('src')
     const thumbnail = absolute(thumbSrc, SAUCENAO_ORIGIN)
     if (!thumbnail) return
     const thumbnailBlocked = thumbSrc?.includes('/blocked.gif') ?? false
