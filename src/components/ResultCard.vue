@@ -82,7 +82,7 @@ const tagItems = computed(() => props.item.tags ?? [])
           playsinline
         />
         <el-image
-          v-else
+          v-else-if="!item.thumbnailBlocked"
           class="result__media"
           :src="cover"
           alt="搜索结果预览"
@@ -107,6 +107,10 @@ const tagItems = computed(() => props.item.tags ?? [])
             </div>
           </template>
         </el-image>
+        <div v-else class="result__media-fallback">
+          <el-icon><Picture /></el-icon>
+          <span>{{ item.level === 'Explicit' ? 'R18 预览已隐藏' : '上游未提供预览' }}</span>
+        </div>
 
         <el-button
           v-if="item.video"

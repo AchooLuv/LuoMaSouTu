@@ -9,6 +9,10 @@
       "destination": "/api/proxy"
     },
     {
+      "source": "/saucenao/(.*)",
+      "destination": "/api/proxy"
+    },
+    {
       "source": "/:path*",
       "destination": "/index.html"
     }

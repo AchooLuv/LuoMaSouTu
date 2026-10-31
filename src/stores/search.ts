@@ -12,12 +12,17 @@ export const useSearchStore = defineStore('search', () => {
   /** 各引擎的选项，互不干扰 */
   const options = ref<Record<EngineId, Record<string, unknown>>>({
     iqdb: defaultOptions('iqdb'),
+    saucenao: defaultOptions('saucenao'),
     tracemoe: defaultOptions('tracemoe'),
   })
   /** 最近搜索记录，仅保留本次会话 */
   const history = ref<SearchRecord[]>([])
   /** 各引擎是否已完成过至少一次搜索（用于区分空态文案） */
-  const searched = ref<Record<EngineId, boolean>>({ iqdb: false, tracemoe: false })
+  const searched = ref<Record<EngineId, boolean>>({
+    iqdb: false,
+    saucenao: false,
+    tracemoe: false,
+  })
 
   const currentOptions = computed(() => options.value[engineId.value])
 

@@ -1,5 +1,5 @@
 /** 被支持的引擎标识 */
-export type EngineId = 'iqdb' | 'tracemoe'
+export type EngineId = 'iqdb' | 'tracemoe' | 'saucenao'
 
 /** 上传来源 */
 export type UploadSource = 'file' | 'paste' | 'url'
@@ -89,10 +89,14 @@ export interface ResultType {
   level?: string
   /** 图片尺寸（IQDB），如 1280×720 */
   size?: string
-  /** 来源图库名（IQDB），如 yande.re */
+  /** 来源图库名（IQDB / SauceNAO），如 yande.re */
   source?: string
-  /** 来源图库图标（IQDB） */
+  /** 来源图库图标（IQDB / SauceNAO） */
   serviceIcon?: string
+  /** 作品作者（SauceNAO） */
+  author?: string
+  /** 上游未提供缩略图（SauceNAO 的 blocked.gif 占位） */
+  thumbnailBlocked?: boolean
   /** 已翻译的图片特征标签（IQDB） */
   tags?: string[]
 }

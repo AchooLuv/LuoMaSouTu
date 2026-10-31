@@ -25,6 +25,12 @@ export default defineConfig({
         target: 'https://api.trace.moe',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/trace/, '')
+      },
+      // SauceNAO 的网页版 HTML 搜索匿名可用；JSON API 才需要 Key
+      '/saucenao': {
+        target: 'https://saucenao.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/saucenao/, '')
       }
     }
   }

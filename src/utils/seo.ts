@@ -8,7 +8,7 @@ export const SITE_NAME = '骡马搜图 LuoMa'
 
 export const HOME_TITLE = '骡马搜图 LuoMa - 在线以图搜图，反查图片出处与番剧截图来源'
 export const HOME_DESCRIPTION =
-  '骡马搜图是一个免费的在线以图搜图工具：上传、拖拽或粘贴一张动漫截图，即可通过 IQDB 在 Danbooru、yande.re、Konachan 等 8 个图库中反查原图出处，或通过 TRACE.MOE 定位截图出自哪部番剧的第几集第几秒。'
+  '骡马搜图是一个免费的在线以图搜图工具：上传、拖拽或粘贴一张动漫截图，即可通过 IQDB 在 Danbooru、yande.re、Konachan 等 8 个图库中反查原图出处，通过 SAUCENAO 检索 Pixiv / Twitter 等来源，或通过 TRACE.MOE 定位截图出自哪部番剧的第几集第几秒。'
 
 /** 更新 head 里的 <meta name="..."> 内容，不存在则创建（含 og:/twitter: 前缀） */
 const setMeta = (key: string, content: string, attr: 'name' | 'property' = 'name') => {

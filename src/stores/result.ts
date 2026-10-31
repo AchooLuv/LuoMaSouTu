@@ -3,14 +3,26 @@ import { computed, ref } from 'vue'
 import type { EngineId, ResultType } from '@/types/common'
 
 export const useResultStore = defineStore('result', () => {
-  const results = ref<Record<EngineId, ResultType[]>>({ iqdb: [], tracemoe: [] })
-  const loading = ref<Record<EngineId, boolean>>({ iqdb: false, tracemoe: false })
-  const errors = ref<Record<EngineId, string | null>>({ iqdb: null, tracemoe: null })
+  const results = ref<Record<EngineId, ResultType[]>>({ iqdb: [], saucenao: [], tracemoe: [] })
+  const loading = ref<Record<EngineId, boolean>>({ iqdb: false, saucenao: false, tracemoe: false })
+  const errors = ref<Record<EngineId, string | null>>({
+    iqdb: null,
+    saucenao: null,
+    tracemoe: null,
+  })
   /** 结果区的补充说明，例如被相似度阈值过滤掉的候选数量 */
-  const hints = ref<Record<EngineId, string | null>>({ iqdb: null, tracemoe: null })
+  const hints = ref<Record<EngineId, string | null>>({
+    iqdb: null,
+    saucenao: null,
+    tracemoe: null,
+  })
   /** 用户标记的候选，标记项置顶 */
   const marked = ref<string[]>([])
-  const lastRunAt = ref<Record<EngineId, number | null>>({ iqdb: null, tracemoe: null })
+  const lastRunAt = ref<Record<EngineId, number | null>>({
+    iqdb: null,
+    saucenao: null,
+    tracemoe: null,
+  })
 
   const isMarked = (id: string) => marked.value.includes(id)
 

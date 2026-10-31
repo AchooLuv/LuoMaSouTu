@@ -9,7 +9,6 @@ const badge: Record<number, string> = { 1: '可用', 0: '开发中', '-1': '已�
 /** 已接入的引擎 + 预留中的引擎，后者只展示不可点，避免用户以为功能缺失 */
 const planned = [
   { id: 'ascii2d', label: 'ASCII2D', subtitle: '二次元图库', status: 0 },
-  { id: 'saucenao', label: 'SAUCENAO', subtitle: '综合图源', status: 0 },
   { id: 'ehentai', label: 'EHENTAI', subtitle: '同人图库', status: -1 },
 ]
 

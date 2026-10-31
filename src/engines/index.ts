@@ -1,8 +1,10 @@
 import luoma from '@/utils/http'
 import * as iqdb from './iqdb'
+import * as saucenao from './saucenao'
 import * as tracemoe from './tracemoe'
 import { ellipsisName, getHMS } from '@/utils/format'
 import { IQDB_SERVICES, IQDB_URL_PARAM } from './iqdb'
+import { SAUCENAO_DB, SAUCENAO_MIN_SIMILARITY } from './saucenao'
 import { TRACEMOE_LIMIT, TRACEMOE_MIN_SIMILARITY, TRACEMOE_URL_PARAM, lastReport } from './tracemoe'
 import type { EngineDef, EngineId, ResultField, ResultType, SearchUpload } from '@/types/common'
 
@@ -46,6 +48,22 @@ const requestTraceMoe = async (upload: SearchUpload, options: Record<string, unk
   const res = await luoma.post<unknown>('/trace/search', form, {
     headers: { 'Content-Type': 'multipart/form-data' },
     params,
+  })
+  return res.data
+}
+
+/**
+ * SauceNAO：网页版 HTML 搜索，匿名可用（只有 JSON API 才需要 Key）。
+ * db=999 检索全部数据库；返回 HTML，交给 parse 解析。
+ */
+const requestSaucenao = async (upload: SearchUpload) => {
+  const form = new FormData()
+  form.append('file', upload.file, upload.file.name)
+  form.append('db', SAUCENAO_DB)
+  const res = await luoma.post<string>('/saucenao/search.php', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    responseType: 'text',
+    transformResponse: [(data: string) => data],
   })
   return res.data
 }
@@ -112,6 +130,23 @@ const traceMoeFields: ResultField[] = [
   },
 ]
 
+const saucenaoFields: ResultField[] = [
+  similarityField,
+  {
+    label: '来源站点',
+    kind: 'tag',
+    value: (item) => item.source,
+    tagType: () => 'info',
+  },
+  { label: '作者', kind: 'text', value: (item) => item.author },
+  {
+    label: '图片评级',
+    kind: 'tag',
+    value: (item) => item.level,
+    tagType: (item) => (item.level === 'Safe' ? 'success' : 'danger'),
+  },
+]
+
 /**
  * IQDB 结果「匹配率」的默认下限（界面上的百分比整数）。
  *
@@ -125,7 +160,7 @@ export const IQDB_MIN_SIMILARITY = 20
 export const TRACEMOE_FILTER_DEFAULT = Math.round(TRACEMOE_MIN_SIMILARITY * 100)
 
 /**
- * IQDB 判定为 R18 的图库评级。
+ * 图库评级中判定为 R18 的档位。
  * Danbooru 系分级：Safe / Questionable / Explicit，另加 IQDB 自身的 Ero、Unrated。
  * 其中 Ero、Explicit 属于明确的 R18；Questionable 也按 R18 处理（预期用户是要挡掉这类内容）。
  * Unrated 无法判断，保守起见不算 R18。
@@ -177,6 +212,37 @@ export const ENGINES: EngineDef[] = [
     parse: iqdb.parse,
   },
   {
+    id: 'saucenao',
+    label: 'SAUCENAO',
+    subtitle: '多库聚合',
+    description: '检索 Pixiv、Twitter、Danbooru 等来源，匹配度更细',
+    status: 1,
+    accent: '#f0653a',
+    options: [
+      {
+        id: 'minSimilarity',
+        label: '最低匹配率',
+        hint: '低于该匹配率的结果不展示',
+        type: 'slider',
+        min: 0,
+        max: 95,
+        step: 5,
+        suffix: '%',
+        value: SAUCENAO_MIN_SIMILARITY,
+        defaultChecked: true,
+      },
+      {
+        id: 'hideR18',
+        label: '过滤 R18 内容',
+        hint: '隐藏 SauceNAO 标记为 Questionable / Explicit 的结果，默认不过滤',
+        type: 'switch',
+        defaultChecked: false,
+      },
+    ],
+    request: requestSaucenao,
+    parse: saucenao.parse,
+  },
+  {
     id: 'tracemoe',
     label: 'TRACE.MOE',
     subtitle: '番剧定位',
@@ -226,8 +292,13 @@ export const defaultOptions = (id: EngineId): Record<string, unknown> =>
       .map((option) => [option.id, option.value ?? true])
   )
 
-export const collectFields = (id: EngineId): ResultField[] =>
-  id === 'iqdb' ? iqdbFields : traceMoeFields
+const FIELDS: Record<EngineId, ResultField[]> = {
+  iqdb: iqdbFields,
+  saucenao: saucenaoFields,
+  tracemoe: traceMoeFields,
+}
+
+export const collectFields = (id: EngineId): ResultField[] => FIELDS[id]
 
 export interface FilterResult {
   /** 过滤后保留下来的结果 */
@@ -255,6 +326,8 @@ export const collectFiltered = (
   const rawThreshold = Number(options.minSimilarity)
   const threshold = Number.isFinite(rawThreshold) ? rawThreshold : 0
   const hideR18 = Boolean(options.hideR18)
+  // IQDB 与 SauceNAO 都带图库评级；trace.moe 没有这个维度
+  const supportsR18 = id === 'iqdb' || id === 'saucenao'
 
   let hiddenBySimilarity = 0
   let hiddenByR18 = 0
@@ -265,7 +338,7 @@ export const collectFiltered = (
       hiddenBySimilarity++
       continue
     }
-    if (hideR18 && id === 'iqdb' && item.level && R18_LEVELS.has(item.level.toLowerCase())) {
+    if (hideR18 && supportsR18 && item.level && R18_LEVELS.has(item.level.toLowerCase())) {
       hiddenByR18++
       continue
     }
@@ -281,7 +354,7 @@ export const toRequestOptions = (options: Record<string, unknown>): Record<strin
 
 /**
  * 结果区的补充说明。
- * - IQDB 与 trace.moe 的「匹配度」含义不同，需要向用户解释
+ * - 三个引擎的「匹配度」含义不同，需要向用户解释
  * - 被过滤掉多少条也要如实说明，否则用户会以为"结果丢了"
  * - filter 由界面在渲染时算好传入，这样调整阈值后说明会同步更新
  */
@@ -303,6 +376,11 @@ export const collectHint = (
   if (id === 'iqdb') {
     parts.push(
       'IQDB 的匹配度表示缩略图层面的视觉相似度，20% 以上即可能是同一张图的转载或裁剪版本，建议以图库详情页为准'
+    )
+  }
+  if (id === 'saucenao') {
+    parts.push(
+      'SauceNAO 的匹配度是跨图库加权分数：90% 以上基本是同一张图，60%~90% 多为转载或同系列；默认折叠的低分结果也已取回，可用「最低匹配率」筛选'
     )
   }
 
@@ -331,6 +409,13 @@ export const collectEmptyReason = (
     return undefined
   }
 
+  if (id === 'saucenao') {
+    if (filter?.hiddenBySimilarity) {
+      return `有 ${filter.hiddenBySimilarity} 条候选低于当前的 ${filter.threshold}% 最低匹配率，可以调低阈值再看。`
+    }
+    return undefined
+  }
+
   const report = rawList ? lastReport(rawList) : undefined
   if (report && report.total > 0) {
     return `接口返回了 ${report.total} 条候选，但相似度均低于 ${Math.round(
@@ -343,4 +428,4 @@ export const collectEmptyReason = (
   return undefined
 }
 
-export { iqdb, tracemoe }
+export { iqdb, saucenao, tracemoe }

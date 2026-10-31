@@ -1,5 +1,10 @@
 # treeData 搜索支持完善 — 可行性评估
 
+> **2026-10 复核更新**：本文件对 SauceNAO 与 E-Hentai 的结论已被
+> [engine-support-recheck-2026-10.md](./engine-support-recheck-2026-10.md) 修正。
+> 简言之：SauceNAO 的**网页版 HTML 搜索匿名可用**（只有 JSON API 需要 Key）；E-Hentai 匿名仅支持
+> **精确哈希**搜索；ASCII2D 的 Cloudflare 阻塞结论不变，且已用 Chrome TLS 指纹复测确认。
+>
 > 评估日期：2026-02-XX　评估对象：原 `src/data/common.ts` 的 `treeData` 及其消费方
 > 方法：静态代码走查 + 对 5 个目标站点做真实 HTTP 探针（curl，实测响应码/响应体）
 >

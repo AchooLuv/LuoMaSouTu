@@ -16,6 +16,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware'
 const TARGETS = {
   iqdb: 'https://iqdb.org',
   trace: 'https://api.trace.moe',
+  saucenao: 'https://saucenao.com',
 }
 
 const resolveTarget = (req) => {
@@ -28,8 +29,14 @@ const resolveTarget = (req) => {
 
   for (const candidate of candidates) {
     if (typeof candidate !== 'string') continue
-    const match = candidate.match(/(?:^|[/=&?])(iqdb|trace)(?=[/?]|$)/)
-    if (match) return { key: match[1], target: TARGETS[match[1]] }
+    const match = candidate.match(/(?:^|[/=&?])(iqdb|trace|saucenao)(?=[/?]|$)/)
+    if (!match) continue
+    // 经 Vercel rewrite 后 req.url 可能只剩 /api/proxy，此时用命中的原始 URI 还原，
+    // 否则下面的 pathRewrite 无法剥离 /iqdb、/saucenao、/trace 前缀。
+    if (candidate !== req.url && candidate.startsWith('/')) {
+      req.url = candidate
+    }
+    return { key: match[1], target: TARGETS[match[1]] }
   }
   return null
 }
@@ -50,6 +57,7 @@ export default function handler(req, res) {
     pathRewrite: {
       '^/iqdb': '',
       '^/trace': '',
+      '^/saucenao': '',
     },
     onError: (_err, _req, response) => {
       if (response.headersSent) return
