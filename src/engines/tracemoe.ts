@@ -1,7 +1,11 @@
 import type { ResultType } from '@/types/common'
 
 const TRACEMOE_ORIGIN = 'https://api.trace.moe'
-/** 展示用的最低相似度，低于该值的结果基本没有参考价值 */
+/**
+ * 默认展示的最低相似度，只作为界面滑块的默认值。
+ * 解析层不再按它丢弃候选：否则用户把「最低匹配率」调低时，
+ * 被提前过滤掉的低分结果也回不来，滑块看起来就像坏了。
+ */
 export const TRACEMOE_MIN_SIMILARITY = 0.7
 /** trace.moe 单张图片最多返回的候选数量 */
 export const TRACEMOE_LIMIT = 12
@@ -79,7 +83,8 @@ const pickStudio = (hit: TraceMoeHit): string | undefined => {
 
 /** 查询当前 IP 的额度使用情况 */
 export const fetchQuota = async (): Promise<TraceMoeQuota> => {
-  const res = await fetch(`${TRACEMOE_ORIGIN}/me`)
+  // 额度要实时：显式绕过浏览器缓存，否则搜索后可能还读到旧的 quotaUsed
+  const res = await fetch(`${TRACEMOE_ORIGIN}/me`, { cache: 'no-store' })
   if (!res.ok) throw new Error(`额度接口返回 HTTP ${res.status}`)
   const data = (await res.json()) as TraceMoeQuota
   if (typeof data?.quota !== 'number') throw new Error('额度接口返回结构异常')
@@ -87,32 +92,19 @@ export const fetchQuota = async (): Promise<TraceMoeQuota> => {
 }
 
 /**
- * 解析结果附带"被相似度阈值挡掉多少条"的信息，
- * 用于在全部低于阈值时给出可解释的提示，而不是只显示一句"没有结果"。
+ * 解析 trace.moe 的 JSON 响应。
+ *
+ * 注意：这里保留所有带 similarity 的命中，不在解析层做最低相似度过滤。
+ * 过滤统一由界面的「最低匹配率」滑块在 `collectFiltered` 里完成，
+ * 这样用户既能调高阈值，也能调低阈值把低分候选找回来。
  */
-interface ParseReport {
-  list: ResultType[]
-  /** 接口返回但相似度不足被过滤掉的条数 */
-  rejected: number
-  /** 接口返回的总条数 */
-  total: number
-}
-
-const reports = new WeakMap<ResultType[], Omit<ParseReport, 'list'>>()
-
-export const lastReport = (list: ResultType[]): Omit<ParseReport, 'list'> | undefined =>
-  reports.get(list)
-
 export const parse = (raw: unknown): ResultType[] => {
   const data = (raw ?? {}) as TraceMoeResponse
   const hits = Array.isArray(data.result) ? data.result : []
   if (data.error) throw new Error(data.error)
 
-  const kept = hits.filter(
-    (hit) => typeof hit?.similarity === 'number' && hit.similarity > TRACEMOE_MIN_SIMILARITY
-  )
-
-  const list = kept
+  return hits
+    .filter((hit) => typeof hit?.similarity === 'number')
     .map((hit) => {
       const episode = hit.episode ?? hit.episode_start ?? undefined
       const anime = hit.anilist
@@ -141,7 +133,4 @@ export const parse = (raw: unknown): ResultType[] => {
       } satisfies ResultType
     })
     .sort((a, b) => b.similarity - a.similarity)
-
-  reports.set(list, { rejected: hits.length - kept.length, total: hits.length })
-  return list
 }

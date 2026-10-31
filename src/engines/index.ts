@@ -4,7 +4,7 @@ import * as saucenao from './saucenao'
 import * as tracemoe from './tracemoe'
 import { IQDB_SERVICES, IQDB_URL_PARAM } from './iqdb'
 import { SAUCENAO_DB, SAUCENAO_MIN_SIMILARITY } from './saucenao'
-import { TRACEMOE_LIMIT, TRACEMOE_MIN_SIMILARITY, TRACEMOE_URL_PARAM, lastReport } from './tracemoe'
+import { TRACEMOE_LIMIT, TRACEMOE_MIN_SIMILARITY, TRACEMOE_URL_PARAM } from './tracemoe'
 import type { EngineDef, EngineId, ResultType, SearchUpload } from '@/types/common'
 
 /**
@@ -76,7 +76,7 @@ const requestSaucenao = async (upload: SearchUpload) => {
  * 所以这里按实测分布取 20%：能滤掉明显不相关的结果，又不会清空列表。
  */
 export const IQDB_MIN_SIMILARITY = 20
-/** TRACE.MOE 结果「匹配率」的默认下限：与解析层的保留阈值一致 */
+/** TRACE.MOE 界面「最低匹配率」的默认值；解析层不再提前丢弃低分候选 */
 export const TRACEMOE_FILTER_DEFAULT = Math.round(TRACEMOE_MIN_SIMILARITY * 100)
 
 /**
@@ -301,8 +301,7 @@ export const collectHint = (
 
 /**
  * 结果整体为空时的原因说明（区别于 collectHint：那条只在有结果时展示）。
- * rawList 必须是解析层返回的原始数组——解析层用它作为 key 记录了
- * "因相似度不足被丢弃"的条数，用来解释为什么一条都没有。
+ * rawList 用于解释「接口返回了多少条、其中多少条被阈值挡住」。
  */
 export const collectEmptyReason = (
   id: EngineId,
@@ -328,14 +327,11 @@ export const collectEmptyReason = (
     return undefined
   }
 
-  const report = rawList ? lastReport(rawList) : undefined
-  if (report && report.total > 0) {
-    return `接口返回了 ${report.total} 条候选，但相似度均低于 ${Math.round(
-      TRACEMOE_MIN_SIMILARITY * 100
-    )}%，已全部过滤——通常说明这张图不是番剧截图，或截图经过了明显裁剪、滤镜处理。`
-  }
   if (filter?.hiddenBySimilarity) {
-    return `有 ${filter.hiddenBySimilarity} 条候选低于当前的 ${filter.threshold}% 最低匹配率，可以调低阈值再看。`
+    const total = rawList?.length
+    return total
+      ? `接口返回了 ${total} 条候选，其中 ${filter.hiddenBySimilarity} 条低于当前的 ${filter.threshold}% 最低匹配率，可以调低阈值再看。`
+      : `有 ${filter.hiddenBySimilarity} 条候选低于当前的 ${filter.threshold}% 最低匹配率，可以调低阈值再看。`
   }
   return undefined
 }

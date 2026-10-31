@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useTraceQuota } from '@/composables/useTraceQuota'
 
 const { loading, total, used, remaining, percent, level, failed, refresh } = useTraceQuota()
+
+// 额度面板只在 TRACE.MOE 引擎下挂载，首次显示时拉一次
+onMounted(refresh)
 </script>
 
 <template>

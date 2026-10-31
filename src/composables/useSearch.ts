@@ -32,19 +32,20 @@ export const useSearch = () => {
       const list = engine.parse(raw)
       resultStore.setResult(engineId, list)
       searchStore.markSearched(engineId)
+
+      // 结果条数以过滤后为准：历史记录、提示与结果区保持一致
+      const filtered = collectFiltered(engineId, list, options)
       searchStore.pushHistory({
         engine: engineId,
         engineLabel: engine.label,
         preview: upload.preview,
-        count: list.length,
+        count: filtered.list.length,
       })
 
-      // 界面上的结果条数以过滤后为准
-      const { list: kept } = collectFiltered(engineId, list, options)
-      if (kept.length) {
-        tipsType(true, `${engine.label} 命中 ${kept.length} 条结果`)
+      if (filtered.list.length) {
+        tipsType(true, `${engine.label} 命中 ${filtered.list.length} 条结果`)
       } else {
-        const reason = collectEmptyReason(engineId, collectFiltered(engineId, list, options), list)
+        const reason = collectEmptyReason(engineId, filtered, list)
         tipsType(false, reason ?? '没有找到匹配结果，可尝试换一张更清晰的图片', 'warning')
       }
     } catch (error) {
