@@ -18,7 +18,6 @@ import {
   ElDropdownMenu,
   ElEmpty,
   ElIcon,
-  ElImage,
   ElInput,
   ElLink,
   ElLoading,
@@ -60,7 +59,6 @@ import 'element-plus/es/components/dropdown-item/style/css'
 import 'element-plus/es/components/dropdown-menu/style/css'
 import 'element-plus/es/components/empty/style/css'
 import 'element-plus/es/components/icon/style/css'
-import 'element-plus/es/components/image/style/css'
 import 'element-plus/es/components/input/style/css'
 import 'element-plus/es/components/link/style/css'
 import 'element-plus/es/components/loading/style/css'
@@ -89,7 +87,6 @@ const components: Record<string, Component> = {
   ElDropdownMenu,
   ElEmpty,
   ElIcon,
-  ElImage,
   ElInput,
   ElLink,
   ElProgress,

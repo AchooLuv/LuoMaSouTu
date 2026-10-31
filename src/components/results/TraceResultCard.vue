@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { ElImage } from 'element-plus'
+import 'element-plus/es/components/image/style/css'
 import ResultStar from './ResultStar.vue'
 import { ellipsisName, getHMS } from '@/utils/format'
 import type { ResultType } from '@/types/common'
@@ -74,7 +76,7 @@ const toggleVideo = () => {
         autoplay
         playsinline
       />
-      <el-image
+      <ElImage
         v-else
         class="scene-card__image"
         :src="cover"
@@ -103,7 +105,7 @@ const toggleVideo = () => {
             <span>加载中</span>
           </div>
         </template>
-      </el-image>
+      </ElImage>
 
       <template v-if="!showVideo">
         <div class="scene-card__vignette" />

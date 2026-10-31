@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { ElImage } from 'element-plus'
+import 'element-plus/es/components/image/style/css'
 import ResultStar from './ResultStar.vue'
 import type { ResultType } from '@/types/common'
 
@@ -46,7 +48,7 @@ const barWidth = computed(() => `${Math.min(100, Math.max(2, props.item.similari
 <template>
   <article class="iqdb-card luoma-fade-up" :class="{ 'is-marked': marked }">
     <div class="iqdb-card__media">
-      <el-image
+      <ElImage
         class="iqdb-card__image"
         :src="cover"
         :alt="title"
@@ -69,7 +71,7 @@ const barWidth = computed(() => `${Math.min(100, Math.max(2, props.item.similari
             <span>加载中</span>
           </div>
         </template>
-      </el-image>
+      </ElImage>
 
       <div class="iqdb-card__shade" />
       <span class="iqdb-card__rank">#{{ String(index + 1).padStart(2, '0') }}</span>

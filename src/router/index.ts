@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import Home from '@/views/Main/Index.vue'
 import { HOME_DESCRIPTION, HOME_TITLE, SITE_NAME, applySeo } from '@/utils/seo'
 
-const Home = () => import('@/views/Main/Index.vue')
+// 首页是唯一的主路由，直接进主包，避免首屏再发起一次路由 chunk 请求
 const NotFound = () => import('@/views/404/NotFound.vue')
 
 declare module 'vue-router' {

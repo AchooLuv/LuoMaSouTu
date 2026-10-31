@@ -47,7 +47,14 @@ const onSearch = async () => {
     <header class="luoma-header">
       <div class="luoma-container luoma-header__inner">
         <div class="luoma-header__logo">
-          <img class="logo-mark" :src="logoSrc" alt="骡马搜图" width="36" height="36" />
+          <img
+            class="logo-mark"
+            :src="logoSrc"
+            alt="骡马搜图"
+            width="36"
+            height="36"
+            fetchpriority="high"
+          />
           <span class="logo-text">
             <b>骡马搜图</b>
             <small>LuoMa SouTu</small>

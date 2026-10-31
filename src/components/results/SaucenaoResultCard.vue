@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { ElImage } from 'element-plus'
+import 'element-plus/es/components/image/style/css'
 import ResultStar from './ResultStar.vue'
 import type { ResultType } from '@/types/common'
 
@@ -65,7 +67,7 @@ const ringOffset = computed(
     :style="{ '--source': sourceColor }"
   >
     <div class="sauce-card__media">
-      <el-image
+      <ElImage
         v-if="!item.thumbnailBlocked"
         class="sauce-card__image"
         :src="cover"
@@ -89,7 +91,7 @@ const ringOffset = computed(
             <span>加载中</span>
           </div>
         </template>
-      </el-image>
+      </ElImage>
 
       <div v-else class="sauce-card__blocked">
         <el-icon><Picture /></el-icon>
