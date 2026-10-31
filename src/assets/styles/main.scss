@@ -93,6 +93,17 @@ a {
   gap: 8px;
 }
 
+/* 顶栏「导航」下拉（窄屏）里的链接：让整行可点 */
+.site-nav-mobile__menu .el-dropdown-menu__item {
+  padding: 0;
+}
+
+.site-nav-mobile__menu .site-nav-mobile__item {
+  display: block;
+  padding: 8px 16px;
+  color: var(--luoma-text);
+}
+
 .luoma-main {
   flex: 1;
   padding: 22px 0 40px;

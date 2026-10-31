@@ -21,6 +21,13 @@ const { refresh: refreshQuota } = useTraceQuota()
 /** 品牌图标（源自 404.webp，已按 2x 屏预生成 128px 小图，避免每页下载大图） */
 const logoSrc = new URL('@/assets/images/logo.webp', import.meta.url).href
 
+/** 顶栏站点导航：桌面端平铺，窄屏收进「导航」下拉 */
+const siteLinks = [
+  { label: '作者博客', href: 'https://my.muri.life' },
+  { label: '每日放送', href: 'https://muri.life' },
+  { label: '正则教程', href: 'https://rejs.muri.life' },
+]
+
 const loading = computed(() => resultStore.loading[searchStore.engineId])
 const error = computed(() => resultStore.errors[searchStore.engineId])
 const searched = computed(() => searchStore.searched[searchStore.engineId])
@@ -48,6 +55,45 @@ const onSearch = async () => {
         </div>
         <div class="luoma-header__spacer" />
         <div class="luoma-header__actions">
+          <nav class="site-nav" aria-label="站点导航">
+            <el-link
+              v-for="link in siteLinks"
+              :key="link.href"
+              class="site-nav__link"
+              :href="link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              underline="never"
+            >
+              {{ link.label }}
+            </el-link>
+          </nav>
+
+          <el-dropdown
+            class="site-nav-mobile"
+            trigger="click"
+            popper-class="site-nav-mobile__menu"
+          >
+            <el-button class="site-nav-mobile__trigger" link>
+              导航
+              <el-icon><ArrowDown /></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="link in siteLinks" :key="link.href">
+                  <a
+                    class="site-nav-mobile__item"
+                    :href="link.href"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {{ link.label }}
+                  </a>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+
           <el-link
             href="https://github.com/AchooLuv/LuoMaSouTu"
             target="_blank"
@@ -127,6 +173,48 @@ const onSearch = async () => {
     font-weight: 500;
     letter-spacing: 0.6px;
     color: var(--luoma-text-3);
+  }
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &__link {
+    font-size: 13px;
+    color: var(--luoma-text-2);
+    white-space: nowrap;
+    transition: color 0.18s ease;
+
+    &:hover {
+      color: var(--luoma-brand);
+    }
+  }
+}
+
+.site-nav-mobile {
+  display: none;
+
+  &__trigger {
+    font-size: 13px;
+    color: var(--luoma-text-2);
+  }
+}
+
+@media (max-width: 860px) {
+  .site-nav {
+    display: none;
+  }
+
+  .site-nav-mobile {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text small {
+    display: none;
   }
 }
 

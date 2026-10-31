@@ -216,8 +216,10 @@ const onFileChange = (event: Event) => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 260px;
+  /* 16:9；单列布局下用 max-width 代替 max-height，避免高度封顶后比例被拉扁 */
+  max-width: 462px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
   overflow: hidden;
   cursor: pointer;
   border: 1.5px dashed var(--luoma-border-strong);
