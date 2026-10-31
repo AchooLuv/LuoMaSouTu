@@ -1,6 +1,6 @@
 <div align="center">
 
-# 骡马搜图 · LuoMaSouTu
+# 骡马搜图 · LuoMa SouTu
 
 **以图搜图 / 以图搜番 Web 应用 —— 反查动漫图片的原始出处，定位番剧截图出自哪一集哪一秒**
 
@@ -21,7 +21,7 @@
 
 ---
 
-**骡马搜图（LuoMaSouTu）** 是一个免费、免登录的**在线以图搜图工具**，把 [IQDB](https://iqdb.org/)、
+**骡马搜图（LuoMa SouTu）** 是一个免费、免登录的**在线以图搜图工具**，把 [IQDB](https://iqdb.org/)、
 [SauceNAO](https://saucenao.com/) 与 [trace.moe](https://trace.moe/) 三个以图搜图引擎聚合到一个界面里：
 
 - 想查**「这张动漫图出自哪里 / 原图在哪」** → 用 IQDB，在 Danbooru、Konachan、yande.re、Gelbooru、Sankaku、e-shuushuu、Zerochan、Anime-Pictures 共 8 个图库中反查出处
