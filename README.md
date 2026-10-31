@@ -194,58 +194,6 @@ src/
 └─ assets/styles/          tokens.scss（设计令牌）+ main.scss（全局样式）
 ```
 
-### 设计要点
-
-**1. 引擎描述符 + 独立结果卡片 —— 新增图源的边际成本约 2~3 小时**
-
-请求与解析仍完全由描述符驱动：每个引擎在 `src/engines/index.ts` 里声明
-「请求怎么发、响应怎么解析」：
-
-```ts
-{
-  id: 'iqdb',
-  label: 'IQDB',
-  options: [{ id: 'forcegray', label: '忽略色彩', param: 'forcegray', value: 'on' }],
-  request: (upload, options) => { /* 返回原始响应 */ },
-  parse: (raw) => [/* 归一化成 ResultType[] */],
-}
-```
-
-展示层不再塞进描述符：三个引擎各自有独立的结果卡片（`src/components/results/`）——
-IQDB 是两列图库卡片，SauceNAO 是按来源着色的来源卡片，TRACE.MOE 是 16:9 影院式卡片。
-新增引擎 = 描述符 + `parse` + 一个卡片组件。
-
-**2. 统一的结果模型**
-
-`similarity` 在解析层统一归一化为 `0~100` 的整数（IQDB / SauceNAO 原生是百分数、trace.moe 是 `0~1`
-小数），避免出现 `> 0.9` 与 `> 90` 两种比较并存。
-
-**3. 代理必须走 HTTPS**
-
-`iqdb.org` 对明文 HTTP 会直接 `301` 跳转到 HTTPS，因此 `vite.config.ts` 与 `api/proxy.js`
-两处的上游地址都必须是 `https://`，否则代理层拿到的是跳转页而不是搜索结果。
-
-**4. 双主题**
-
-所有颜色收敛到 `src/assets/styles/tokens.scss` 的 `--luoma-*` CSS 变量，并把 Element Plus
-的变量映射到同一套令牌上，因此主题切换只需在 `<html>` 上增删 `.dark` 类。
-
-## 🔐 依赖与安全
-
-- **无循环依赖**：`src` 下的模块经图分析（Tarjan 强连通分量）确认无环。
-- **依赖保持更新**：`package.json` 使用 `^` 范围，建议定期执行 `npm update` 拉满范围内版本。
-  仓库历史上的 Dependabot 告警绝大多数源于「lockfile 落后于声明的范围」，而非范围本身过宽。
-- **唯一未修复项**：`braces@3.0.3`（深层嵌套 pattern 导致栈溢出，上游无补丁版本，
-  `micromatch@4.0.8` 仍依赖它）。它的引入路径是
-  `http-proxy-middleware → micromatch → braces`，**只存在于 Vercel Serverless 侧**，
-  匹配的是写死的 `/iqdb`、`/saucenao`、`/trace` 前缀，不接触用户输入；且不在前端产物中（`dist` 内零命中），
-  对浏览器端用户无影响。
-
-## 📸 截图
-
-> 欢迎补充自己的运行截图（建议放在 `docs/screenshot-light.png` 与 `docs/screenshot-dark.png`），
-> 仓库首页有截图能显著提升在搜索结果里的点击率。
-
 ## ⚠️ 已知限制
 
 - **ASCII2D / EHENTAI 未接入**：E-Hentai 匿名仅支持精确哈希（相似度扫描需登录），ASCII2D 需要浏览器中继；
@@ -256,27 +204,6 @@ IQDB 是两列图库卡片，SauceNAO 是按来源着色的来源卡片，TRACE.
 - **TRACE.MOE 匿名额度按出口 IP 计算**（当前 100 次/天），Serverless 部署时所有访客共享该额度
 - **三个引擎的「匹配度」不是一个量纲**，详见 [常见问题](#-常见问题faq)
 - **上游可用性不受本仓库控制**：IQDB、SauceNAO 与 trace.moe 均为第三方服务，请遵守其使用条款并避免高频请求
-
-## 🗺 Roadmap
-
-- [x] 引擎描述符架构，三个引擎统一结果模型
-- [x] 接入 SauceNAO（网页版 HTML，无 Key）
-- [x] 粘贴 / 拖拽 / URL 多种投图方式
-- [x] 双主题、响应式、结果星标与大图预览
-- [x] SEO 与社交分享元信息、结构化数据
-- [ ] 根据番剧名在 Bangumi 查询并展示番剧信息
-- [ ] 同一张图的多引擎结果并列对比
-- [ ] Element Plus 按需引入，进一步压缩产物体积
-
-## 🤝 贡献
-
-欢迎提交 [Issue](../../issues) 与 [PR](../../pulls)。开始之前建议先跑一遍：
-
-```bash
-npm run type-check && npm run lint && npm run build
-```
-
-如果这个项目对你有帮助，欢迎点一个 ⭐ Star；也欢迎补充引擎支持、修正文档或反馈上游接口变化。
 
 ## 📄 License
 
