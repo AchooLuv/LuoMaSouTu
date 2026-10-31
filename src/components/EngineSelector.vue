@@ -13,6 +13,10 @@ const planned = [
 ]
 
 const active = computed(() => ENGINES)
+/** 当前选中的引擎，用于在下方展示它的说明 */
+const current = computed(
+  () => ENGINES.find((engine) => engine.id === searchStore.engineId) ?? ENGINES[0]
+)
 </script>
 
 <template>
@@ -21,6 +25,7 @@ const active = computed(() => ENGINES)
       <el-icon><Search /></el-icon>
       选择搜索引擎
     </div>
+
     <div class="engines__list">
       <button
         v-for="engine in active"
@@ -31,15 +36,18 @@ const active = computed(() => ENGINES)
         :style="{ '--accent': engine.accent }"
         @click="searchStore.setEngine(engine.id)"
       >
-        <span class="engine__top">
-          <span class="engine__name">{{ engine.label }}</span>
-          <span v-if="searchStore.engineId === engine.id" class="engine__check">
-            <el-icon><Select /></el-icon>
-          </span>
-        </span>
-        <span class="engine__desc">{{ engine.description }}</span>
+        {{ engine.label }}
       </button>
     </div>
+
+    <div v-if="current" class="engine-detail" :style="{ '--accent': current.accent }">
+      <div class="engine-detail__head">
+        <span class="engine-detail__name">{{ current.label }}</span>
+        <span class="engine-detail__sub">{{ current.subtitle }}</span>
+      </div>
+      <p class="engine-detail__desc">{{ current.description }}</p>
+    </div>
+
     <el-collapse class="engines__more">
       <el-collapse-item name="planned">
         <template #title>
@@ -62,13 +70,13 @@ const active = computed(() => ENGINES)
 <style scoped lang="scss">
 .engines {
   &__list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
   }
 
   &__more {
-    margin-top: 6px;
+    margin-top: 8px;
     border-top: none;
 
     :deep(.el-collapse-item__header),
@@ -80,52 +88,64 @@ const active = computed(() => ENGINES)
 }
 
 .engine {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-  padding: 10px 12px;
-  text-align: left;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 34px;
+  padding: 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
   cursor: pointer;
   border: 1px solid var(--luoma-border);
-  border-radius: var(--luoma-radius);
+  border-radius: var(--luoma-radius-sm);
   background: var(--luoma-surface);
-  color: var(--luoma-text);
-  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  color: var(--luoma-text-2);
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 
   &:hover {
     border-color: var(--accent);
-    transform: translateY(-1px);
+    color: var(--luoma-text);
   }
 
   &.is-active {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 10%, var(--luoma-surface));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--luoma-surface));
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
   }
+}
 
-  &__top {
+.engine-detail {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--luoma-radius-sm) var(--luoma-radius-sm) 0;
+  background: var(--luoma-surface-2);
+
+  &__head {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 6px;
   }
 
   &__name {
+    font-size: 12px;
     font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.3px;
+    color: var(--luoma-text);
   }
 
-  &__check {
-    margin-left: auto;
-    color: var(--accent);
-    display: flex;
+  &__sub {
+    font-size: 11px;
+    color: var(--luoma-text-3);
   }
 
   &__desc {
+    margin: 2px 0 0;
     font-size: 11px;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--luoma-text-3);
   }
 }

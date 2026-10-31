@@ -47,23 +47,26 @@ const setOption = (option: EngineOption, value: unknown) => {
         <span class="luoma-muted">即时生效，无需重新搜索</span>
       </div>
       <div v-for="option in filterOptions" :key="option.id" class="options__filter">
-        <div class="options__filter-head">
-          <span class="options__label">{{ option.label }}</span>
-          <span v-if="option.type === 'slider'" class="options__value">
-            {{ valueOf(option) }}{{ option.suffix ?? '' }}
-          </span>
-        </div>
-        <el-slider
-          v-if="option.type === 'slider'"
-          class="options__slider"
-          size="small"
-          :model-value="Number(valueOf(option))"
-          :min="option.min ?? 0"
-          :max="option.max ?? 100"
-          :step="option.step ?? 5"
-          :show-tooltip="false"
-          @update:model-value="(value: number | number[]) => setOption(option, value)"
-        />
+        <template v-if="option.type === 'slider'">
+          <div class="options__filter-head">
+            <span class="options__label">{{ option.label }}</span>
+            <span class="options__value">
+              {{ valueOf(option) }}{{ option.suffix ?? '' }}
+            </span>
+          </div>
+          <el-slider
+            class="options__slider"
+            size="small"
+            :model-value="Number(valueOf(option))"
+            :min="option.min ?? 0"
+            :max="option.max ?? 100"
+            :step="option.step ?? 5"
+            :show-tooltip="false"
+            @update:model-value="(value: number | number[]) => setOption(option, value)"
+          />
+          <span v-if="option.hint" class="options__hint">{{ option.hint }}</span>
+        </template>
+
         <el-checkbox
           v-else
           class="options__item options__item--compact"
@@ -71,8 +74,8 @@ const setOption = (option: EngineOption, value: unknown) => {
           @update:model-value="(value: unknown) => setOption(option, value)"
         >
           <span class="options__label">{{ option.label }}</span>
+          <span v-if="option.hint" class="options__hint">{{ option.hint }}</span>
         </el-checkbox>
-        <span v-if="option.hint" class="options__hint">{{ option.hint }}</span>
       </div>
     </template>
   </section>
@@ -84,10 +87,10 @@ const setOption = (option: EngineOption, value: unknown) => {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
     font-size: 12px;
     color: var(--luoma-text-2);
-    margin-bottom: 6px;
-    gap: 8px;
 
     &--filter {
       margin-top: 14px;
@@ -103,10 +106,18 @@ const setOption = (option: EngineOption, value: unknown) => {
     margin-right: 0;
     padding: 6px 0;
 
+    :deep(.el-checkbox__input) {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      height: 18px;
+    }
+
     :deep(.el-checkbox__label) {
       display: flex;
       flex-direction: column;
-      line-height: 1.45;
+      padding-left: 8px;
+      line-height: 18px;
       white-space: normal;
     }
 
@@ -116,7 +127,7 @@ const setOption = (option: EngineOption, value: unknown) => {
   }
 
   &__filter {
-    padding: 6px 0;
+    padding: 4px 0;
 
     & + & {
       border-top: 1px solid var(--luoma-border);
@@ -152,6 +163,10 @@ const setOption = (option: EngineOption, value: unknown) => {
     font-size: 11px;
     line-height: 1.5;
     color: var(--luoma-text-3);
+  }
+
+  &__filter > &__hint {
+    margin-top: 4px;
   }
 }
 </style>
