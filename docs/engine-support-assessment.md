@@ -63,6 +63,8 @@ export interface EngineDef {
 2. 引擎实现拆到 `src/engines/iqdb.ts`、`src/engines/tracemoe.ts`，各自负责请求与解析。
 3. 展示字段由 `collectFields(engineId)` 提供 `ResultField[]`，`ResultCard.vue` 按
    `kind`（tag / link / text / timestamp）动态渲染，**模板里不再出现任何引擎判断**。
+   > 2026-10 更新：展示层已改为每个引擎独立的结果卡片（`src/components/results/`），
+   > `collectFields` / `ResultField` 已移除；本段保留为当时的方案记录。
 4. `similarity` 统一归一化为 `0~100` 整数，双语义消除。
 5. 图片来源统一成 `SearchUpload`（本地文件 / 粘贴板 / 远程 URL），引擎只需处理"一个文件"。
 

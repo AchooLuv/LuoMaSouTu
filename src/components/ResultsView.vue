@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import ResultCard from './ResultCard.vue'
-import { collectEmptyReason, collectFields, collectFiltered, collectHint, getEngine } from '@/engines'
+import { collectEmptyReason, collectFiltered, collectHint, getEngine } from '@/engines'
 import { useResultStore } from '@/stores/result'
 import { useSearchStore } from '@/stores/search'
 import type { EngineId } from '@/types/common'
@@ -20,7 +20,6 @@ const searchStore = useSearchStore()
 const resultStore = useResultStore()
 
 const engine = computed(() => getEngine(props.engineId))
-const fields = computed(() => collectFields(props.engineId))
 /** 解析层返回的原始结果（过滤器以它为输入，单独保留用于解释"为什么一条都没有"） */
 const rawList = computed(() => resultStore.results[props.engineId])
 /**
@@ -114,13 +113,13 @@ const filteredHidden = computed(
         show-icon
         :title="hint"
       />
-      <div class="results__list">
+      <div class="results__list" :class="`results__list--${engineId}`">
         <ResultCard
           v-for="(item, index) in list"
           :key="item.id"
+          :engine-id="engineId"
           :item="item"
           :index="index"
-          :fields="fields"
           :marked="resultStore.isMarked(item.id)"
           @mark="resultStore.toggleMark"
         />
@@ -202,6 +201,13 @@ const filteredHidden = computed(
     gap: 12px;
   }
 
+  /* IQDB 是图库浏览：两列图库卡片，和另外两个引擎的单列形成区分 */
+  &__list--iqdb {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
   &__alert-body {
     display: flex;
     align-items: center;
@@ -221,6 +227,19 @@ const filteredHidden = computed(
   .results__head {
     position: static;
     flex-wrap: wrap;
+  }
+
+  .results__list--iqdb {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 宽屏下 SauceNAO 也排两列：来源卡片信息量小，单列会留下大片空白 */
+@media (min-width: 1250px) {
+  .results__list--saucenao {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
   }
 }
 </style>

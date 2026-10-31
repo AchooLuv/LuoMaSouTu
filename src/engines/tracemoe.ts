@@ -24,6 +24,23 @@ interface TraceMoeAnime {
     english?: string | null
     chinese?: string | null
   }
+  siteUrl?: string
+  format?: string
+  seasonYear?: number
+  episodes?: number
+  coverImage?: {
+    large?: string | null
+    medium?: string | null
+  }
+  bannerImage?: string | null
+  studios?: {
+    edges?: Array<{
+      isMain?: boolean
+      node?: {
+        name?: string
+      }
+    }>
+  }
 }
 
 interface TraceMoeHit {
@@ -52,6 +69,12 @@ const pickTitle = (hit: TraceMoeHit): string | undefined => {
   const title = hit.anilist?.title
   if (!title) return undefined
   return title.chinese || title.native || title.romaji || title.english || undefined
+}
+
+/** 优先取主制作公司，没有标记时退回第一家 */
+const pickStudio = (hit: TraceMoeHit): string | undefined => {
+  const edges = hit.anilist?.studios?.edges ?? []
+  return edges.find((edge) => edge.isMain)?.node?.name ?? edges[0]?.node?.name
 }
 
 /** 查询当前 IP 的额度使用情况 */
@@ -92,6 +115,7 @@ export const parse = (raw: unknown): ResultType[] => {
   const list = kept
     .map((hit) => {
       const episode = hit.episode ?? hit.episode_start ?? undefined
+      const anime = hit.anilist
       // from === to 时（同帧命中）只展示一个时间点，避免出现 "00:11:27 — 00:11:27"
       return {
         id: `trace-${hit.filename ?? hit.image ?? 'unknown'}-${hit.at ?? hit.from ?? 0}`,
@@ -100,6 +124,13 @@ export const parse = (raw: unknown): ResultType[] => {
         thumbnail: hit.image,
         preview: hit.image,
         animeName: pickTitle(hit),
+        animeCover: anime?.coverImage?.large ?? anime?.coverImage?.medium ?? undefined,
+        animeBanner: anime?.bannerImage ?? undefined,
+        animeUrl: anime?.siteUrl,
+        studio: pickStudio(hit),
+        format: anime?.format,
+        seasonYear: anime?.seasonYear,
+        totalEpisodes: anime?.episodes,
         episode: episode ?? undefined,
         filename: hit.filename,
         from: hit.from,

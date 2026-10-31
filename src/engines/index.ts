@@ -2,11 +2,10 @@ import luoma from '@/utils/http'
 import * as iqdb from './iqdb'
 import * as saucenao from './saucenao'
 import * as tracemoe from './tracemoe'
-import { ellipsisName, getHMS } from '@/utils/format'
 import { IQDB_SERVICES, IQDB_URL_PARAM } from './iqdb'
 import { SAUCENAO_DB, SAUCENAO_MIN_SIMILARITY } from './saucenao'
 import { TRACEMOE_LIMIT, TRACEMOE_MIN_SIMILARITY, TRACEMOE_URL_PARAM, lastReport } from './tracemoe'
-import type { EngineDef, EngineId, ResultField, ResultType, SearchUpload } from '@/types/common'
+import type { EngineDef, EngineId, ResultType, SearchUpload } from '@/types/common'
 
 /**
  * IQDB：multipart 表单，service[] 可重复以指定图库，forcegray 为「忽略色彩」。
@@ -67,85 +66,6 @@ const requestSaucenao = async (upload: SearchUpload) => {
   })
   return res.data
 }
-
-const similarityField: ResultField = {
-  label: '匹配度',
-  kind: 'tag',
-  value: (item) => `${item.similarity}%`,
-  tagType: (item) =>
-    item.similarity >= 90 ? 'success' : item.similarity >= 75 ? 'warning' : 'info',
-}
-
-const iqdbFields: ResultField[] = [
-  similarityField,
-  {
-    label: '来源图库',
-    kind: 'tag',
-    value: (item) => item.source,
-    tagType: () => 'info',
-  },
-  {
-    label: '图片评级',
-    kind: 'tag',
-    value: (item) => item.level,
-    tagType: (item) => (item.level === 'Safe' ? 'success' : 'danger'),
-  },
-  { label: '原图尺寸', kind: 'text', value: (item) => item.size },
-  {
-    label: '图片特征',
-    kind: 'tags',
-    value: (item) => (item.tags?.length ? item.tags.join('、') : undefined),
-  },
-]
-
-const traceMoeFields: ResultField[] = [
-  similarityField,
-  {
-    label: '番剧名',
-    kind: 'tag',
-    value: (item) => item.animeName,
-    tagType: () => 'info',
-  },
-  {
-    label: '出现集数',
-    kind: 'text',
-    value: (item) => (item.episode ? `第 ${item.episode} 集` : undefined),
-  },
-  {
-    label: '出现时间',
-    kind: 'timestamp',
-    value: (item) => {
-      if (item.from === undefined) return undefined
-      // from 与 to 落到同一秒时只显示一个时间点，避免「00:11:27 — 00:11:27」
-      if (item.to === undefined || Math.floor(item.to) === Math.floor(item.from)) {
-        return getHMS(item.from)
-      }
-      return `${getHMS(item.from)} — ${getHMS(item.to)}`
-    },
-  },
-  {
-    label: '视频文件',
-    kind: 'text',
-    value: (item) => (item.filename ? ellipsisName(item.filename, 52) : undefined),
-  },
-]
-
-const saucenaoFields: ResultField[] = [
-  similarityField,
-  {
-    label: '来源站点',
-    kind: 'tag',
-    value: (item) => item.source,
-    tagType: () => 'info',
-  },
-  { label: '作者', kind: 'text', value: (item) => item.author },
-  {
-    label: '图片评级',
-    kind: 'tag',
-    value: (item) => item.level,
-    tagType: (item) => (item.level === 'Safe' ? 'success' : 'danger'),
-  },
-]
 
 /**
  * IQDB 结果「匹配率」的默认下限（界面上的百分比整数）。
@@ -291,14 +211,6 @@ export const defaultOptions = (id: EngineId): Record<string, unknown> =>
       .options.filter((option) => option.defaultChecked === true)
       .map((option) => [option.id, option.value ?? true])
   )
-
-const FIELDS: Record<EngineId, ResultField[]> = {
-  iqdb: iqdbFields,
-  saucenao: saucenaoFields,
-  tracemoe: traceMoeFields,
-}
-
-export const collectFields = (id: EngineId): ResultField[] => FIELDS[id]
 
 export interface FilterResult {
   /** 过滤后保留下来的结果 */

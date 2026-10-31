@@ -255,7 +255,7 @@ POST https://ascii2d.net/search/uri        -> 403 Cloudflare challenge
 | `vite.config.ts` | 增加 `/saucenao` → `https://saucenao.com` |
 | `vercel.json` | 增加 `/saucenao/(.*)` rewrite |
 | `src/engines/saucenao.ts` | 新增：multipart 请求 + cheerio 解析 |
-| `src/engines/index.ts` | 注册 `ENGINES` 描述符、`saucenaoFields`、`collectFields` 分支 |
+| `src/engines/index.ts` | 注册 `ENGINES` 描述符，并新增 `SaucenaoResultCard` 结果卡片 |
 | `src/types/common.ts` | `EngineId` 加 `'saucenao'` |
 | `src/components/EngineSelector.vue` | 从 `planned` 移除，进入可点列表 |
 | `src/stores/search.ts` | `options` / `searched` 补默认项 |

@@ -28,6 +28,8 @@ const searchStore = useSearchStore()
 
 <style scoped lang="scss">
 .history {
+  min-width: 0;
+
   &__clear {
     margin-left: auto;
     padding: 0;
@@ -42,6 +44,7 @@ const searchStore = useSearchStore()
     padding: 0 0 4px;
     display: flex;
     gap: 8px;
+    min-width: 0;
     overflow-x: auto;
   }
 

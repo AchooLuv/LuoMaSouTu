@@ -72,6 +72,20 @@ export interface ResultType {
   url?: string
   /** 番剧名 */
   animeName?: string
+  /** 番剧封面（TRACE.MOE） */
+  animeCover?: string
+  /** 番剧横幅（TRACE.MOE） */
+  animeBanner?: string
+  /** 番剧详情页（TRACE.MOE） */
+  animeUrl?: string
+  /** 制作公司（TRACE.MOE） */
+  studio?: string
+  /** 番剧类型，如 TV / MOVIE（TRACE.MOE） */
+  format?: string
+  /** 番剧年份（TRACE.MOE） */
+  seasonYear?: number
+  /** 番剧总集数（TRACE.MOE） */
+  totalEpisodes?: number
   /** 集数 */
   episode?: number
   /** 匹配片段的起止秒数 */
@@ -99,18 +113,6 @@ export interface ResultType {
   thumbnailBlocked?: boolean
   /** 已翻译的图片特征标签（IQDB） */
   tags?: string[]
-}
-
-type ResultFieldKind = 'tag' | 'link' | 'text' | 'timestamp' | 'tags'
-
-/** 结果卡片上的一个字段描述 */
-export interface ResultField {
-  label: string
-  kind: ResultFieldKind
-  /** 从结果里取值 */
-  value: (item: ResultType) => string | undefined
-  /** tag 类型专用 */
-  tagType?: (item: ResultType) => 'success' | 'warning' | 'info' | 'danger'
 }
 
 export interface SearchRecord {

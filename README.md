@@ -182,6 +182,7 @@ src/
 │  └─ 404/                 404 页
 ├─ components/             UploadPanel / EngineSelector / EngineOptions / ResultCard /
 │                          ResultsView / TraceQuota / SearchHistory / ThemeToggle
+│  └─ results/             IqdbResultCard / SaucenaoResultCard / TraceResultCard / ResultStar
 ├─ engines/                引擎层：请求怎么发、响应怎么解析
 │  ├─ index.ts             引擎描述符 ENGINES（新增引擎的唯一入口）
 │  ├─ iqdb.ts              IQDB 请求与 HTML 解析
@@ -195,10 +196,10 @@ src/
 
 ### 设计要点
 
-**1. 引擎描述符 —— 新增图源的边际成本约 1~2 小时**
+**1. 引擎描述符 + 独立结果卡片 —— 新增图源的边际成本约 2~3 小时**
 
-界面层不出现任何引擎判断（没有 `switch (engine)`、没有按引擎写的 `v-if`）。每个引擎在
-`src/engines/index.ts` 里声明「请求怎么发、响应怎么解析、卡片展示哪些字段」：
+请求与解析仍完全由描述符驱动：每个引擎在 `src/engines/index.ts` 里声明
+「请求怎么发、响应怎么解析」：
 
 ```ts
 {
@@ -210,8 +211,9 @@ src/
 }
 ```
 
-结果渲染由 `ResultField[]`（`tag` / `link` / `text` / `timestamp` / `tags`）驱动，
-因此新增引擎只需加一段描述符 + 一个 `parse` 函数。
+展示层不再塞进描述符：三个引擎各自有独立的结果卡片（`src/components/results/`）——
+IQDB 是两列图库卡片，SauceNAO 是按来源着色的来源卡片，TRACE.MOE 是 16:9 影院式卡片。
+新增引擎 = 描述符 + `parse` + 一个卡片组件。
 
 **2. 统一的结果模型**
 

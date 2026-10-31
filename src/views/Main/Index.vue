@@ -230,6 +230,7 @@ const onSearch = async () => {
   top: 78px;
   display: flex;
   flex-direction: column;
+  min-width: 0;
   padding: 16px;
 
   &__divider {
