@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { tipsType } from '@/utils/notify'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 const AXIOS_TIMEOUT = 90000
@@ -40,7 +39,6 @@ class Request {
           504: '图源响应超时（504）',
         }
         const msg = MAP[status] ?? `请求失败（HTTP ${status}）`
-        tipsType(false, msg)
         return Promise.reject(Object.assign(new Error(msg), { friendly: msg, status }))
       }
     )
