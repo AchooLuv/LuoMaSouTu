@@ -1,4 +1,3 @@
-import * as cheerio from 'cheerio'
 import type { ResultType } from '@/types/common'
 
 const SAUCENAO_ORIGIN = 'https://saucenao.com'
@@ -100,11 +99,13 @@ const assertUsablePage = (raw: string) => {
  * 低于匿名展示阈值的条目会带 `hidden` 类，但 HTML 里是完整存在的；
  * 这里一并解析，交给界面上的「最低匹配率」筛选，避免用户误以为没有结果。
  */
-export const parse = (raw: unknown): ResultType[] => {
+export const parse = async (raw: unknown): Promise<ResultType[]> => {
   if (typeof raw !== 'string' || !raw.trim()) return []
   assertUsablePage(raw)
 
-  const $ = cheerio.load(raw)
+  // cheerio 体积不小，放到搜索时再加载，别拖慢首屏
+  const { load } = await import('cheerio')
+  const $ = load(raw)
   const list: ResultType[] = []
 
   $('div.result').each((index, el) => {

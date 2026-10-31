@@ -36,7 +36,6 @@ interface TraceMoeAnime {
     large?: string | null
     medium?: string | null
   }
-  bannerImage?: string | null
   studios?: {
     edges?: Array<{
       isMain?: boolean
@@ -55,7 +54,6 @@ interface TraceMoeHit {
   from?: number
   to?: number
   at?: number
-  duration?: number
   similarity: number
   video?: string
   image?: string
@@ -117,7 +115,6 @@ export const parse = (raw: unknown): ResultType[] => {
         preview: hit.image,
         animeName: pickTitle(hit),
         animeCover: anime?.coverImage?.large ?? anime?.coverImage?.medium ?? undefined,
-        animeBanner: anime?.bannerImage ?? undefined,
         animeUrl: anime?.siteUrl,
         studio: pickStudio(hit),
         format: anime?.format,
@@ -127,8 +124,6 @@ export const parse = (raw: unknown): ResultType[] => {
         filename: hit.filename,
         from: hit.from,
         to: hit.to,
-        at: hit.at,
-        duration: hit.duration,
         video: hit.video,
       } satisfies ResultType
     })

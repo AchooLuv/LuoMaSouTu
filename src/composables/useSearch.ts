@@ -23,13 +23,12 @@ export const useSearch = () => {
     const options = searchStore.options[engineId] ?? {}
     resultStore.setLoading(engineId, true)
     resultStore.setError(engineId, null)
-    resultStore.setHint(engineId, null)
     busy.value = true
 
     try {
       // 最低匹配率与 R18 过滤只在本地筛选，不发给图源
       const raw = await engine.request(upload, toRequestOptions(options))
-      const list = engine.parse(raw)
+      const list = await engine.parse(raw)
       resultStore.setResult(engineId, list)
       searchStore.markSearched(engineId)
 

@@ -103,7 +103,6 @@ export const ENGINES: EngineDef[] = [
         id: 'forcegray',
         label: '忽略色彩',
         hint: '以灰度特征匹配，适合截图被调过色的情况',
-        param: 'forcegray',
         value: 'on',
         // 灰度匹配会牺牲彩色特征，默认不开启
         defaultChecked: false,
@@ -174,7 +173,6 @@ export const ENGINES: EngineDef[] = [
         id: 'cutBorders',
         label: '裁剪图片边缘',
         hint: '去掉上下黑边或水印边框后再匹配，可提升命中率',
-        param: 'cutBorders',
         value: true,
         defaultChecked: true,
       },
@@ -221,8 +219,6 @@ export interface FilterResult {
   hiddenByR18: number
   /** 当前生效的最低匹配率 */
   threshold: number
-  /** 是否开启了 R18 过滤 */
-  hideR18: boolean
 }
 
 /**
@@ -257,7 +253,7 @@ export const collectFiltered = (
     kept.push(item)
   }
 
-  return { list: kept, hiddenBySimilarity, hiddenByR18, threshold, hideR18 }
+  return { list: kept, hiddenBySimilarity, hiddenByR18, threshold }
 }
 
 /** 从选项里挑出真正要发给图源的参数（过滤项只作用于本地结果） */

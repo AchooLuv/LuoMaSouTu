@@ -1,4 +1,3 @@
-import * as cheerio from 'cheerio'
 import { translateTags } from '@/utils/tags'
 import type { ResultType } from '@/types/common'
 
@@ -74,14 +73,16 @@ const postId = (detailUrl: string): string | undefined => {
  * 以及无命中提示（th 为 "No relevant matches"）——它们的详情链接指向 iqdb.org 自身。
  * 对站点改版保持宽容：取不到的字段留空，不抛异常。
  */
-export const parse = (raw: unknown): ResultType[] => {
+export const parse = async (raw: unknown): Promise<ResultType[]> => {
   if (typeof raw !== 'string' || !raw.trim()) return []
   // IQDB 在高负载时会返回 200 + 排队页（没有结果表格）。这种页面如果按普通
   // 结果解析会得到空数组，界面会误报"没有匹配结果"，所以这里显式报错。
   if (/iqdb is currently under high load|Place in queue:/i.test(raw)) {
     throw new Error('IQDB 当前处于高负载排队中，请稍后重试')
   }
-  const $ = cheerio.load(raw)
+  // cheerio 体积不小，放到搜索时再加载，别拖慢首屏
+  const { load } = await import('cheerio')
+  const $ = load(raw)
 
   const rows = $('table')
     .map((_, table): ResultType | undefined => {

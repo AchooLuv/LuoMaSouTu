@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import IqdbResultCard from './results/IqdbResultCard.vue'
-import SaucenaoResultCard from './results/SaucenaoResultCard.vue'
-import TraceResultCard from './results/TraceResultCard.vue'
+import { defineAsyncComponent } from 'vue'
 import type { EngineId, ResultType } from '@/types/common'
+
+// 结果卡片只在搜索出结果后出现，按需加载，避免占用首屏
+const IqdbResultCard = defineAsyncComponent(() => import('./results/IqdbResultCard.vue'))
+const SaucenaoResultCard = defineAsyncComponent(() => import('./results/SaucenaoResultCard.vue'))
+const TraceResultCard = defineAsyncComponent(() => import('./results/TraceResultCard.vue'))
 
 defineProps<{
   engineId: EngineId

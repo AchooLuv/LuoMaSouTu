@@ -26,8 +26,6 @@ export interface EngineOption {
   hint?: string
   /** 控件类型，默认 switch */
   type?: EngineOptionType
-  /** 传给引擎的请求参数名；纯客户端过滤项不需要 */
-  param?: string
   /** 参数值，默认 true / 'on' */
   value?: unknown
   defaultChecked?: boolean
@@ -53,8 +51,8 @@ export interface EngineDef {
   options: EngineOption[]
   /** 发起搜索请求 */
   request: (upload: SearchUpload, options: Record<string, unknown>) => Promise<unknown>
-  /** 把引擎原始响应转换成统一的 ResultType[] */
-  parse: (raw: unknown) => ResultType[]
+  /** 把引擎原始响应转换成统一的 ResultType[]；解析可能按需异步加载 */
+  parse: (raw: unknown) => ResultType[] | Promise<ResultType[]>
 }
 
 /** 归一化后的单条搜索结果 */
@@ -74,8 +72,6 @@ export interface ResultType {
   animeName?: string
   /** 番剧封面（TRACE.MOE） */
   animeCover?: string
-  /** 番剧横幅（TRACE.MOE） */
-  animeBanner?: string
   /** 番剧详情页（TRACE.MOE） */
   animeUrl?: string
   /** 制作公司（TRACE.MOE） */
@@ -91,10 +87,6 @@ export interface ResultType {
   /** 匹配片段的起止秒数 */
   from?: number
   to?: number
-  /** 匹配到的帧对应的秒数 */
-  at?: number
-  /** 片段时长（秒） */
-  duration?: number
   /** 视频文件名 */
   filename?: string
   /** 预览视频 / 动图 */

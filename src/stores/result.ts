@@ -10,25 +10,13 @@ export const useResultStore = defineStore('result', () => {
     saucenao: null,
     tracemoe: null,
   })
-  /** 结果区的补充说明，例如被相似度阈值过滤掉的候选数量 */
-  const hints = ref<Record<EngineId, string | null>>({
-    iqdb: null,
-    saucenao: null,
-    tracemoe: null,
-  })
   /** 用户标记的候选，标记项置顶 */
   const marked = ref<string[]>([])
-  const lastRunAt = ref<Record<EngineId, number | null>>({
-    iqdb: null,
-    saucenao: null,
-    tracemoe: null,
-  })
 
   const isMarked = (id: string) => marked.value.includes(id)
 
   const setResult = (id: EngineId, payload: ResultType[]) => {
     results.value[id] = payload
-    lastRunAt.value[id] = Date.now()
   }
 
   const setLoading = (id: EngineId, value: boolean) => {
@@ -37,10 +25,6 @@ export const useResultStore = defineStore('result', () => {
 
   const setError = (id: EngineId, message: string | null) => {
     errors.value[id] = message
-  }
-
-  const setHint = (id: EngineId, message: string | null) => {
-    hints.value[id] = message
   }
 
   const toggleMark = (id: string) => {
@@ -62,15 +46,12 @@ export const useResultStore = defineStore('result', () => {
     results,
     loading,
     errors,
-    hints,
     marked,
-    lastRunAt,
     markCount,
     isMarked,
     setResult,
     setLoading,
     setError,
-    setHint,
     toggleMark,
     ordered,
   }
