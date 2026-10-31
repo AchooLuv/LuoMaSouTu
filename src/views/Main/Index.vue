@@ -50,7 +50,7 @@ const onSearch = async () => {
           <img class="logo-mark" :src="logoSrc" alt="骡马搜图" width="36" height="36" />
           <span class="logo-text">
             <b>骡马搜图</b>
-            <small>LuoMa Image Search</small>
+            <small>LuoMa SouTu</small>
           </span>
         </div>
         <div class="luoma-header__spacer" />
