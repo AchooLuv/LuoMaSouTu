@@ -4,7 +4,7 @@
 
 **以图搜图 / 以图搜番 Web 应用 —— 反查动漫图片的原始出处，定位番剧截图出自哪一集哪一秒**
 
-[![在线体验](https://img.shields.io/badge/在线体验-img.muri.life-6d4df6?style=for-the-badge)](https://soutu.muri.life)
+[![在线体验](https://img.shields.io/badge/在线体验-soutu.muri.life-6d4df6?style=for-the-badge)](https://soutu.muri.life)
 [![License](https://img.shields.io/badge/license-MIT-0f9d8f?style=for-the-badge)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-ff69b4?style=for-the-badge)](../../pulls)
 
@@ -15,7 +15,7 @@
 [![Element Plus](https://img.shields.io/badge/Element%20Plus-2.14-409eff?logo=elementplus&logoColor=white)](https://element-plus.org/)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 
-[在线体验](https://img.muri.life) · [功能](#-功能) · [常见问题](#-常见问题faq) · [快速开始](#-快速开始) · [架构说明](#-架构说明) · [已知限制](#-已知限制)
+[在线体验](https://soutu.muri.life) · [功能](#-功能) · [常见问题](#-常见问题faq) · [快速开始](#-快速开始) · [架构说明](#-架构说明) · [已知限制](#-已知限制)
 
 </div>
 
@@ -70,7 +70,7 @@ ASCII2D 与 E-Hentai 暂未接入，原因见下方 FAQ。
 <details>
 <summary><b>怎么查一张动漫图片的出处 / 原图？</b></summary>
 
-打开 [img.muri.life](https://img.muri.life)，把图片拖进去（或直接 `Ctrl + V` 粘贴截图），
+打开 [soutu.muri.life](https://soutu.muri.life)，把图片拖进去（或直接 `Ctrl + V` 粘贴截图），
 选中 **IQDB** 后点「开始搜索」。结果按匹配度排序，每条都会给出**来源图库、原站帖子号和原图尺寸**，
 点「查看原图页面」即可跳到 Danbooru / yande.re 等站点的原始页面。
 如果截图被调过色，可以勾选「忽略色彩」改用灰度特征匹配。

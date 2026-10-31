@@ -3,7 +3,7 @@
  * 站点地址与主标题/描述在 index.html 里也有一份（供爬虫与社交卡片直接读取），
  * 修改时请两处同步。
  */
-const SITE_URL = 'https://img.muri.life'
+const SITE_URL = 'https://soutu.muri.life'
 export const SITE_NAME = '骡马搜图 LuoMa SouTu'
 
 export const HOME_TITLE = '骡马搜图 LuoMa SouTu - 在线以图搜图，反查图片出处与番剧截图来源'
